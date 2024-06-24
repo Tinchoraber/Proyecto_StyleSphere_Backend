@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import tipoProductoRouter from "./src/controller/tipoProducto-controller.js";
 const app = express();
-const port = 3000; // El puerto 3000 (http://localhost:3000)
+const port = 3001; 
 // Agrego los Middlewares
 app.use(cors()); // Middleware de CORS.
 app.use(express.json()); // Middleware para parsear y comprender JSON.
