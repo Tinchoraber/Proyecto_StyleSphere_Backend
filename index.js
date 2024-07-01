@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import tipoProductoRouter from "./src/controller/tipoProducto-controller.js";
+import LocalesRouter from "./src/controller/locales-controller.js"
 const app = express();
 const port = 3001; 
 // Agrego los Middlewares
@@ -10,6 +11,7 @@ app.use(express.json()); // Middleware para parsear y comprender JSON.
 // Endpoints (todos los Routers)
 //
 app.use("/api/tipoProducto", tipoProductoRouter);
+app.use("/api/locales", LocalesRouter);
 //
 // Inicio el Server y lo pongo a escuchar.
 //
