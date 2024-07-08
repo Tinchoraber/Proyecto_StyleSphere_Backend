@@ -5,30 +5,35 @@ const { Client } = pkg;
 export default class BuscadorRepository {
   searchAsync = async (buscado) => {
     let arrayDevuelto = [];
-    const client = new Client(config); // Importa tu configuración de conexión desde db-config.js
-
+    const client = new Client(config);
     try {
       await client.connect();
 
-      // Consulta SQL para buscar cualquier coincidencia con la letra
-      let sql = `
-        SELECT DISTINCT t.*, p.*, tp.*
-        FROM "tienda" t
-        INNER JOIN "producto" p ON t."idTienda" = p."idTienda"
-        INNER JOIN "TipoProducto" tp ON p."idTipoProducto" = tp."idTipoProducto"
-        WHERE lower(t.nombre) LIKE $1
-           OR lower(p.nombre) LIKE $1
-           OR lower(tp.nombre) LIKE $1`;
+      let sqlTienda = `SELECT t.* FROM "tienda" t WHERE lower(t.nombre) LIKE lower($1)`;
+      let sqlProducto = `SELECT p.* FROM "producto" p WHERE lower(p.nombre) LIKE lower($1)`;
+      let sqlTipoProducto = `SELECT tp.* FROM "TipoProducto" tp WHERE lower(tp.nombre) LIKE lower($1)`;
 
-      const result = await client.query(sql, [`%${buscado.toLowerCase()}%`]);
-      arrayDevuelto = result.rows; // Extraer las filas del resultado
+      let values = [`%${buscado}%`];
+
+      // Ejecutar las tres consultas
+      const resultTienda = await client.query(sqlTienda, values);
+      const resultProducto = await client.query(sqlProducto, values);
+      const resultTipoProducto = await client.query(sqlTipoProducto, values);
+
+      // Combinar los resultados en un solo array
+      arrayDevuelto = [...resultTienda.rows, ...resultProducto.rows, ...resultTipoProducto.rows];
+
+      console.log(arrayDevuelto);
 
     } catch (error) {
       console.error('Error al buscar en la base de datos:', error);
     } finally {
-      await client.end(); // Asegurarse de cerrar la conexión
+      await client.end();
     }
 
     return arrayDevuelto;
   }
 }
+
+
+
