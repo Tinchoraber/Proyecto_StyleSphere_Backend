@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 import tipoProductoRouter from "./src/controller/tipoProducto-controller.js";
+import BuscadorRouter from './src/controller/buscador-controller.js'
 import LocalesRouter from "./src/controller/locales-controller.js";
-import BuscadorRouter from './src/controller/buscador-controller.js';
+import ProductoRouter from './src/controller/producto-controller.js';
 const app = express();
 const port = 3001; 
 // Agrego los Middlewares
@@ -14,6 +15,7 @@ app.use(express.json()); // Middleware para parsear y comprender JSON.
 app.use("/api/tipoProducto", tipoProductoRouter);
 app.use("/api/locales", LocalesRouter);
 app.use("/api/buscador", BuscadorRouter);
+app.use("/api/producto", ProductoRouter);
 //
 // Inicio el Server y lo pongo a escuchar.
 //
