@@ -9,7 +9,7 @@ export default class ProductoRepository{
         try {
             await client.connect();
             const values = [id]
-            let sql = 'SELECT * FROM "producto" p INNER JOIN "tipoproducto" tp ON p."idTipoProducto" = tp."idTipoProducto" WHERE tp."idTipoProducto" = $1'
+            let sql = 'SELECT * FROM "producto" p WHERE p."idTipoProducto" = $1'
             const result = await client.query(sql, values);
             arrayDevuelto = result.rows; // Extraer las filas del resultado
             await client.end();
