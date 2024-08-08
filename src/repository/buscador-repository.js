@@ -11,7 +11,7 @@ export default class BuscadorRepository {
 
       let sqlTienda = `SELECT t.* FROM "tienda" t WHERE lower(t.nombre) LIKE lower($1)`;
       let sqlProducto = `SELECT p.* FROM "producto" p WHERE lower(p.nombre) LIKE lower($1)`;
-      let sqlTipoProducto = `SELECT tp.* FROM "TipoProducto" tp WHERE lower(tp.nombre) LIKE lower($1)`;
+      let sqlTipoProducto = `SELECT tp.* FROM "tipoproducto" tp WHERE lower(tp.nombre) LIKE lower($1)`;
 
       let values = [`%${buscado}%`];
 
