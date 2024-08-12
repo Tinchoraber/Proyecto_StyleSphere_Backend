@@ -5,4 +5,9 @@ export default class ProductoService {
         const repo = new ProductoRepository();
         return await repo.getAllByIdAsync(id);
     }
+
+    getProductosFiltrados = async (productosFiltrados) => {
+        const repo = new ProductoRepository();
+        return await repo.getProductosFiltrados(productosFiltrados);
+    }
 }
