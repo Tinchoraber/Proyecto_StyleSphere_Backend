@@ -5,4 +5,10 @@ export default class LocalesService{
         let arrayRes = await repo.getAllAsync();
         return arrayRes;
     }
+
+    getTop3Async = async () => {
+        const repo = new LocalesRepository();
+        let arrayRes = await repo.getAllAsync();
+        return arrayRes;
+    }
 }
