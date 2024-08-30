@@ -43,5 +43,19 @@ export default class ProductoRepository {
         return arrayDevuelto;
     }
     
+
+    getProductosFavoritos = async (productosFavoritos) => {
+        const client = new Client(config);
+        await client.connect();
+
+        // Asumiendo que 'productosFavoritos' es un array de IDs de productos
+        const query = `SELECT * FROM "producto" WHERE "idProducto" = ANY($1::int[])`;
+        const values = [productosFavoritos];
+
+        const result = await client.query(query, values);
+        await client.end();
+
+        return result.rows;
+    }
     
 }

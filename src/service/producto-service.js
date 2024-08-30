@@ -10,4 +10,9 @@ export default class ProductoService {
         const repo = new ProductoRepository();
         return await repo.getProductosFiltrados(productosFiltrados);
     }
+
+    getProductosFavoritos = async (productosFavoritos) => {
+        const repo = new ProductoRepository();
+        return await repo.getProductosFavoritos(productosFavoritos);
+    }
 }

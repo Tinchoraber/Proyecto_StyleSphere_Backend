@@ -43,8 +43,18 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-
-
-
-
+router.get('/productos_guardados', async (req, res) => {
+    const { favoritosSeleccionados } = req.query;
+    if (!favoritosSeleccionados) {
+        return res.status(400).json({ error: 'No hay productos guardados' });
+    }
+    const productosFavoritos = guardados.split(',').map(Number);
+    try {
+        const favoritos = await svc.getProductosFavoritos(productosFavoritos);
+        res.json(favoritos);
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener productos guardados' });
+    }
+    
+});
 export default router;
