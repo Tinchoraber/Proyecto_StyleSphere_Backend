@@ -43,6 +43,18 @@ export default class ProductoRepository {
         return arrayDevuelto;
     }
     
+    getProductosByMarca = async(idTienda) =>{
+        const client = new Client(config);
+        await client.connect();
+
+        const query = `SELECT * FROM "producto" WHERE "idTienda" = $1 `;
+        const values = [idTienda];
+
+        const result = await client.query(query, values);
+        await client.end();
+
+        return result;
+    }
 
     getProductosFavoritos = async (productosFavoritos) => {
         const client = new Client(config);

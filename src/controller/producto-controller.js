@@ -43,14 +43,33 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.get('/:marca', async (req, res) => {
+    const idTienda = parseInt(req.params.id, 10);
+
+    try {
+        const arrayDevuelto = await svc.getProductosByMarca(idTienda);
+        if (arrayDevuelto.length === 0) {
+            res.status(404).send('No hay productos');
+        } else {
+            res.status(200).json(arrayDevuelto);
+        }
+    } catch (error) {
+        console.error('Error al obtener los productos:', error);
+        res.status(500).send('Error al obtener los productos');
+    }
+});
+
 router.get('/productos_guardados', async (req, res) => {
     const { favoritosSeleccionados } = req.query;
+    console.log(favoritosSeleccionados)
     if (!favoritosSeleccionados) {
         return res.status(400).json({ error: 'No hay productos guardados' });
     }
     const productosFavoritos = guardados.split(',').map(Number);
+    console.log(productosFavoritos)
     try {
         const favoritos = await svc.getProductosFavoritos(productosFavoritos);
+        console.log(favoritos)
         res.json(favoritos);
     } catch (error) {
         res.status(500).json({ error: 'Error al obtener productos guardados' });
