@@ -60,7 +60,6 @@ export default class ProductoRepository {
         const client = new Client(config);
         await client.connect();
 
-        // Asumiendo que 'productosFavoritos' es un array de IDs de productos
         const query = `SELECT * FROM "producto" WHERE "idProducto" = ANY($1::int[])`;
         const values = [productosFavoritos];
 

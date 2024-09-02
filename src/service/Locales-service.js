@@ -8,7 +8,7 @@ export default class LocalesService{
 
     getTop3Async = async () => {
         const repo = new LocalesRepository();
-        let arrayRes = await repo.getAllAsync();
+        let arrayRes = await repo.getTop3Async();
         return arrayRes;
     }
 }
