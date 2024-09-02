@@ -43,7 +43,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.get('/:marca', async (req, res) => {
+router.get('/:idTienda', async (req, res) => {
     const idTienda = parseInt(req.params.id, 10);
 
     try {
