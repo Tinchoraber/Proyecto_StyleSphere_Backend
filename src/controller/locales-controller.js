@@ -14,7 +14,7 @@ router.get('', async (req, res) => {
 });
 
 router.get('/top3', async (req, res) => {
-    const arrayDevuelto = await svc.getAllAsync();
+    const arrayDevuelto = await svc.getTop3Async();
     if (arrayDevuelto == null || arrayDevuelto.length === 0) {
         res.status(404).send('No se encontraron locales');
     } else {
