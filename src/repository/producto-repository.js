@@ -52,7 +52,7 @@ export default class ProductoRepository {
 
         const result = await client.query(query, values);
         await client.end();
-
+        console.log("entroa a result",result)
         return result;
     }
 

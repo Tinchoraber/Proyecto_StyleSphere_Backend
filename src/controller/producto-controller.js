@@ -44,7 +44,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.get('/:idTienda', async (req, res) => {
-    const idTienda = parseInt(req.params.id, 10);
+    const idTienda = parseInt(req.params.idTienda, 10);
 
     try {
         const arrayDevuelto = await svc.getProductosByMarca(idTienda);
