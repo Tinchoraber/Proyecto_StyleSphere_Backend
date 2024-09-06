@@ -47,16 +47,26 @@ export default class ProductoRepository {
         const client = new Client(config);
         await client.connect();
 
-        const query = `SELECT * FROM "producto" WHERE "idTienda" = $1 `;
+        const query = `SELECT p.*, t."marca" FROM "producto" p INNER JOIN "tienda" t ON p."idTienda" = t."idTienda" WHERE p."idTienda" = $1 `;
         const values = [idTienda];
 
         const result = await client.query(query, values);
-        await client.end();
-        console.log("entroa a result",result)
-        return result;
+        if(result.rows == 0){
+            const query2 = 'SELECT marca from tienda WHERE "idTienda" = $1';
+            const values = [idTienda];
+            const result2 = await client.query(query2, values);
+            await client.end();
+            return result2.rows;
+        }
+        else{
+            await client.end();
+            console.log("entroa a result",result.rows)
+            return result.rows;
+        }
+        
     }
 
-    getProductosFavoritos = async (productosFavoritos) => {
+    /*getProductosFavoritos = async (productosFavoritos) => {
         const client = new Client(config);
         await client.connect();
 
@@ -67,6 +77,6 @@ export default class ProductoRepository {
         await client.end();
 
         return result.rows;
-    }
+    }*/
     
 }

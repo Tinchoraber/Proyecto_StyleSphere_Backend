@@ -43,7 +43,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.get('/:idTienda', async (req, res) => {
+router.get('/tienda/:idTienda', async (req, res) => {
+    console.log('entro aca')
     const idTienda = parseInt(req.params.idTienda, 10);
 
     try {
@@ -59,7 +60,7 @@ router.get('/:idTienda', async (req, res) => {
     }
 });
 
-router.get('/productos_guardados', async (req, res) => {
+/*router.get('/productos_guardados', async (req, res) => {
     const { favoritosSeleccionados } = req.query;
     console.log(favoritosSeleccionados)
     if (!favoritosSeleccionados) {
@@ -75,5 +76,5 @@ router.get('/productos_guardados', async (req, res) => {
         res.status(500).json({ error: 'Error al obtener productos guardados' });
     }
     
-});
+});*/
 export default router;
