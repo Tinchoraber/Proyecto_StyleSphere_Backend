@@ -78,5 +78,43 @@ export default class ProductoRepository {
 
         return result.rows;
     }*/
-    
+
+    getAllFilteredAsync = async (idTipoProducto, talle, color, precioMin, precioMax) => { 
+        let arrayDevuelto = [];
+        const client = new Client(config);
+        try {
+            await client.connect();
+
+            // Crear la base de la query
+            let sql = `SELECT * FROM "producto" WHERE "idTipoProducto" = $1`;
+            const values = [idTipoProducto];
+
+            // Agregar filtros condicionales
+            if (talle) {
+                sql += ` AND "talle" = $${values.length + 1}`;
+                values.push(talle);
+            }
+
+            if (color) {
+                sql += ` AND "color" = $${values.length + 1}`;
+                values.push(color);
+            }
+
+            if (precioMin !== undefined && precioMax !== undefined) {
+                sql += ` AND "precio" BETWEEN $${values.length + 1} AND $${values.length + 2}`;
+                values.push(precioMin, precioMax);
+            }
+
+            sql += ' ORDER BY "cantidadVentas" DESC'; 
+
+            const result = await client.query(sql, values);
+            arrayDevuelto = result.rows;
+            await client.end();
+        } catch (error) {
+            console.log(error);
+        }
+        return arrayDevuelto;
+    }
 }
+    
+
