@@ -77,4 +77,15 @@ router.get('/tienda/:idTienda', async (req, res) => {
     }
     
 });*/
+
+router.get('/filtro_categorias/:idTipoProducto', async (req, res) => {
+    const {talle, color, precioMin, precioMax } = req.query;
+    const idTipoProducto = parseInt(req.params.idTipoProducto, 10);
+    const arrayDevuelto = await svc.getAllFilteredAsync(idTipoProducto, talle, color, precioMin, precioMax);
+    if (arrayDevuelto == null || arrayDevuelto.length === 0) {
+        res.status(404).send('No se encontraron productos');
+    } else {
+        res.status(200).json(arrayDevuelto);
+    }
+});
 export default router;
