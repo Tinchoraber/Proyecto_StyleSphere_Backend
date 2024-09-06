@@ -47,7 +47,7 @@ export default class ProductoRepository {
         const client = new Client(config);
         await client.connect();
 
-        const query = `SELECT p.*, t."marca" FROM "producto" p INNER JOIN "tienda" t ON p."idTienda" = t."idTienda" WHERE p."idTienda" = $1 `;
+        const query = `SELECT p.*, t."marca", t."imagenTienda" FROM "producto" p INNER JOIN "tienda" t ON p."idTienda" = t."idTienda" WHERE p."idTienda" = $1 `;
         const values = [idTienda];
 
         const result = await client.query(query, values);
