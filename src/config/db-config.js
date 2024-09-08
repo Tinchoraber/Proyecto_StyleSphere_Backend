@@ -2,7 +2,7 @@ const config = {
     host : "localhost", 
     database : "StyleSphere_BD",
     user : "postgres", 
-    password : "marcos",
+    password : "root",
     port : 5432
 }
 
