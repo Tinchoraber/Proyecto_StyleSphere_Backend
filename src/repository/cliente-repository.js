@@ -1,52 +1,36 @@
 import config from "../config/db-config.js";
 import pkg from 'pg';
+//import jwt from 'jsonwebtoken';
 const { Client } = pkg;
 
 export default class ClienteRepository{
     loginAsync = async (body) => {
         const client = new Client(config);
         await client.connect();
-        let email = body.email;
+        let correoElectronico = body.email;
         let password = body.password;
-        const sql = `SELECT * FROM "cliente" WHERE "email" = $1 and "contraseña" = $2`;
-        const values = [email, password];
+        console.log(body.password)
+        const sql = `SELECT * FROM "cliente" WHERE "correoElectronico" = $1 and "contraseña" = $2`;
+        const values = [correoElectronico, password];
         const result = await client.query(sql, values);
+        console.log(result)
         await client.end();
         
+        
         if(result.rowCount == 0){
-            return [{
-                success: false,
-                message: "Usuario o clave inválida.",
-                token: ""
-            }, 401];
+            return ["Usuario o clave inválida.", 401];
         }
 
-        const user = result.rows[0];
-        const payload = {
-            id: user.id,
-            email: user.email
-        };
-        const secretKey = process.env.ACCESS_TOKEN_SECRET || 'ClaveSuperSecreta2006$';
-        const token = jwt.sign(payload, secretKey);
-
-        const validar = this.validarUsername(email); 
+        const validar = this.validarUsername(correoElectronico); 
         if(!validar){
-            return [{
-                success: false,
-                message: "El email es inválido.",
-                token: ""
-            }, 400];
+            return ["El email es inválido.", 400];
         } else {
-            return [{
-                success: true,
-                message: "Inicio de sesión exitoso.",
-                token: token
-            }, 200];
+            return [result.rows[0], 200];
         }
     }
 
-    validarUsername(email) {
+    validarUsername(correoElectronico) {
         const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        return regex.test(email);
+        return regex.test(correoElectronico);
     }
 }
