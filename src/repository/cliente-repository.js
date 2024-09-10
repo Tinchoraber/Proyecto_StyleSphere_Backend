@@ -15,17 +15,34 @@ export default class ClienteRepository{
         const result = await client.query(sql, values);
         console.log(result)
         await client.end();
-        
-        
-        if(result.rowCount == 0){
-            return ["Usuario o clave inválida.", 401];
-        }
 
         const validar = this.validarUsername(correoElectronico); 
-        if(!validar){
-            return ["El email es inválido.", 400];
+        if(!validar || result.rowCount == 0){
+            return ["El email o la contraseña es inválido.", 400];
         } else {
             return [result.rows[0], 200];
+        }
+    }
+
+    registerAsync = async (body) => {
+        const client = new Client(config);
+        await client.connect();
+        let nombre = body.nombre;
+        let apellido = body.apellido;
+        let correoElectronico = body.email;
+        let password = body.password;
+        let celular = body.celular;
+        const sql = `INSERT INTO "cliente"(nombre, apellido, correoElectronico, contraseña, celular)
+        VALUES($1, $2, $3, $4, $5)`;
+        const values = [nombre, apellido, correoElectronico, password, celular];
+        const result = await client.query(sql, values);
+        await client.end();
+        const validar = this.validarUsername(correoElectronico); 
+        if(!validar || result.rowCount == 0){
+            return ['El email o la contraseña es inválido.', 400];
+        } 
+        else {
+            return [result.rows[0], 201];
         }
     }
 
