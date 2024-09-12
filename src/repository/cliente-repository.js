@@ -27,22 +27,25 @@ export default class ClienteRepository{
     registerAsync = async (body) => {
         const client = new Client(config);
         await client.connect();
+        console.log('aca en el repo',body)
         let nombre = body.nombre;
         let apellido = body.apellido;
         let correoElectronico = body.email;
         let password = body.password;
         let celular = body.celular;
-        const sql = `INSERT INTO "cliente"(nombre, apellido, correoElectronico, contraseña, celular)
+        const sql = `INSERT INTO "cliente"("nombre", "apellido", "correoElectronico", "contraseña", "celular")
         VALUES($1, $2, $3, $4, $5)`;
         const values = [nombre, apellido, correoElectronico, password, celular];
         const result = await client.query(sql, values);
+        console.log('el resultado es: ', result)
         await client.end();
         const validar = this.validarUsername(correoElectronico); 
+        console.log('validar es',validar)
         if(!validar || result.rowCount == 0){
             return ['El email o la contraseña es inválido.', 400];
         } 
         else {
-            return [result.rows[0], 201];
+            return ['Creado', 201];
         }
     }
 

@@ -12,8 +12,10 @@ router.get('/login', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     const infoSesion = req.body
+    console.log(infoSesion)
     const register = await svc.registerAsync(infoSesion);
-    res.status(register[1]).json(register[0]);
+    console.log(register, "aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    res.status(register[1]).send(register[0]);
 });
 
 export default router;
