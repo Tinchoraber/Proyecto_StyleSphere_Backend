@@ -6,7 +6,7 @@ export default class FavoritoRepository {
     insertFavoritoAsync = async (idProducto, idCliente) => { 
         const client = new Client(config);
         await client.connect();
-        const sql = `INSERT INTO favorito ("idProducto", "idCliente") VALUES ($1, $2)`;
+        const sql = `INSERT INTO favorito ("idProducto", "idCliente") VALUES ($1, $2) RETURNING *`;
         const values = [idProducto, idCliente]
         const result = await client.query(sql, values);
         await client.end();
