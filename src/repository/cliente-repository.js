@@ -52,9 +52,8 @@ export default class ClienteRepository{
         }
     };
     
-
-    validarUsername(correoElectronico) {
+}
+export function validarUsername(correoElectronico) {
         const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         return regex.test(correoElectronico);
     }
-}
