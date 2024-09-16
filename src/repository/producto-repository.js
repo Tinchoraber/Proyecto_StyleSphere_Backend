@@ -115,6 +115,26 @@ export default class ProductoRepository {
         }
         return arrayDevuelto;
     }
+
+    getProductosFiltrados = async (productosFiltrados, idTienda) => {
+        const client = new Client(config);
+        let arrayDevuelto = [];
+    
+        try {
+            await client.connect();
+            const sql = 'SELECT * FROM "producto" WHERE "idTipoProducto" = ANY($1::int[]) AND "idTienda" = $2';
+            const values = [productosFiltrados, idTienda];
+            const result = await client.query(sql, values);
+            arrayDevuelto = result.rows;
+        } catch (error) {
+            console.error('Error al obtener los productos:', error);
+            throw error;
+        } finally {
+            await client.end();
+        }
+    
+        return arrayDevuelto;
+    }
 }
     
 

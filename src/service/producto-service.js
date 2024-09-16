@@ -26,4 +26,9 @@ export default class ProductoService {
         let arrayRes = await repo.getAllFilteredAsync(idTipoProducto, talle, color, precioMin, precioMax);
         return arrayRes;
     }
+
+    getProductosFiltradosTienda = async (productosFiltrados, idTienda) => {
+        const repo = new ProductoRepository();
+        return await repo.getProductosFiltradosTienda(productosFiltrados, idTienda);
+    }
 }
