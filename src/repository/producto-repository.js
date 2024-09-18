@@ -65,31 +65,15 @@ export default class ProductoRepository {
         }
         
     }
-
-    /*getProductosFavoritos = async (productosFavoritos) => {
-        const client = new Client(config);
-        await client.connect();
-
-        const query = `SELECT * FROM "producto" WHERE "idProducto" = ANY($1::int[])`;
-        const values = [productosFavoritos];
-
-        const result = await client.query(query, values);
-        await client.end();
-
-        return result.rows;
-    }*/
-
     getAllFilteredAsync = async (idTipoProducto, talle, color, precioMin, precioMax) => { 
         let arrayDevuelto = [];
         const client = new Client(config);
         try {
             await client.connect();
 
-            // Crear la base de la query
             let sql = `SELECT * FROM "producto" WHERE "idTipoProducto" = $1`;
             const values = [idTipoProducto];
 
-            // Agregar filtros condicionales
             if (talle) {
                 sql += ` AND "talle" = $${values.length + 1}`;
                 values.push(talle);
@@ -116,7 +100,7 @@ export default class ProductoRepository {
         return arrayDevuelto;
     }
 
-    getProductosFiltrados = async (productosFiltrados, idTienda) => {
+    getProductosFiltradosTienda = async (productosFiltrados, idTienda) => {
         const client = new Client(config);
         let arrayDevuelto = [];
     

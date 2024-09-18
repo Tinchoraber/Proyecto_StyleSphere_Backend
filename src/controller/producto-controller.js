@@ -23,7 +23,7 @@ router.get('/productos_filtro', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/productos_id/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
 
     if (isNaN(id)) {
@@ -60,24 +60,6 @@ router.get('/tienda/:idTienda', async (req, res) => {
     }
 });
 
-/*router.get('/productos_guardados', async (req, res) => {
-    const { favoritosSeleccionados } = req.query;
-    console.log(favoritosSeleccionados)
-    if (!favoritosSeleccionados) {
-        return res.status(400).json({ error: 'No hay productos guardados' });
-    }
-    const productosFavoritos = guardados.split(',').map(Number);
-    console.log(productosFavoritos)
-    try {
-        const favoritos = await svc.getProductosFavoritos(productosFavoritos);
-        console.log(favoritos)
-        res.json(favoritos);
-    } catch (error) {
-        res.status(500).json({ error: 'Error al obtener productos guardados' });
-    }
-    
-});*/
-
 router.get('/filtro_categorias/:idTipoProducto', async (req, res) => {
     const {talle, color, precioMin, precioMax } = req.query;
     const idTipoProducto = parseInt(req.params.idTipoProducto, 10);
@@ -89,9 +71,9 @@ router.get('/filtro_categorias/:idTipoProducto', async (req, res) => {
     }
 });
 
-router.get('/productos_filtro', async (req, res) => {
-    const { seleccionados } = req.query;
-    const {idTienda} = req.query;
+router.get('/productos_filtro2', async (req, res) => {
+    const { seleccionados, idTienda } = req.query;
+    console.log("aaaaaaaaaaaaaaaa", seleccionados, idTienda)
     if (!seleccionados) {
         return res.status(400).json({ error: 'No se han proporcionado productos para filtrar' });
     }
