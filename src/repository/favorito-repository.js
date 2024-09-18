@@ -6,7 +6,7 @@ export default class FavoritoRepository {
     getFavorito = async (idCliente) => { 
         const client = new Client(config);
         await client.connect();
-        const sql = `SELECT * FROM favorito WHERE "idCliente" = $1`;
+        const sql = `SELECT f.*, p.* FROM favorito f INNER JOIN producto p ON f."idProducto" = p."idProducto" WHERE f."idCliente" = $1`;
         const values = [idCliente]
         const result = await client.query(sql, values);
         await client.end();
@@ -45,7 +45,7 @@ export default class FavoritoRepository {
             return [result.rows, 200]
         }
         else{
-            return ['Error insertando al carrito ', 400]
+            return ['Error eliminando producto de favorito ', 400]
         }
         
     }

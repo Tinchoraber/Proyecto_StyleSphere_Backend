@@ -3,6 +3,11 @@ import pkg from 'pg';
 const { Client } = pkg;
 
 export default class ClienteRepository{
+    validarUsername(correoElectronico) {
+        const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        return regex.test(correoElectronico);
+    }
+    
     loginAsync = async (body) => {
         const client = new Client(config);
         await client.connect();
@@ -53,7 +58,3 @@ export default class ClienteRepository{
     };
     
 }
-export function validarUsername(correoElectronico) {
-        const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        return regex.test(correoElectronico);
-    }

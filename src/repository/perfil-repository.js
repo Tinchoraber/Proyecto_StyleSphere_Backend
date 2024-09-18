@@ -1,9 +1,11 @@
 import config from "../config/db-config.js";
 import pkg from 'pg';
-import { validarUsername } from './cliente-repository.js';
+import ClienteRepository from './cliente-repository.js'; 
 const { Client } = pkg;
 
 export default class PerfilRepository {
+    clienteRepository = new ClienteRepository(); 
+
     actualizarPerfil = async (perfil, idCliente) => {
         const client = new Client(config);
         await client.connect();
@@ -11,6 +13,7 @@ export default class PerfilRepository {
         const sql = `UPDATE "cliente" 
                     SET "nombre" = $1, "apellido" = $2, "correoElectronico" = $3, "contraseña" = $4, "celular" = $5, "fotoPerfil" = $6 
                     WHERE "idCliente" = $7 RETURNING *`;
+        
         let nombre = perfil.nombre;
         let apellido = perfil.apellido;
         let correoElectronico = perfil.correoElectronico;
@@ -22,7 +25,8 @@ export default class PerfilRepository {
         const result = await client.query(sql, values);
         console.log(result);
         await client.end();
-        const validar = validarUsername(correoElectronico);
+        
+        const validar = this.clienteRepository.validarUsername(correoElectronico); 
         if (!validar) {
             return ['El correo electrónico no es válido', 400];
         }
