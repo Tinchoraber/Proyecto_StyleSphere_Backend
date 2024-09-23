@@ -10,7 +10,7 @@ export default class ProductoRepository {
         try {
             await client.connect();
             const values = [id];
-            const sql = 'SELECT * FROM "producto" p WHERE p."idTipoProducto" = $1';
+            const sql = 'SELECT p.*, tp."nombre" as nombrecategoria FROM "producto" p INNER JOIN "tipoproducto" tp ON p."idTipoProducto" = tp."idTipoProducto" WHERE p."idTipoProducto" = $1';
             const result = await client.query(sql, values);
             arrayDevuelto = result.rows;
         } catch (error) {
