@@ -1,5 +1,6 @@
 import config from "../config/db-config.js";
 import pkg from 'pg';
+import jwt from 'jsonwebtoken';
 const { Client } = pkg;
 
 export default class ClienteRepository{
@@ -11,23 +12,40 @@ export default class ClienteRepository{
     loginAsync = async (body) => {
         const client = new Client(config);
         await client.connect();
+    
         let correoElectronico = body.email;
         let password = body.password;
-        console.log(body.password)
-        const sql = `SELECT * FROM "cliente" WHERE "correoElectronico" = $1 and "contraseña" = $2`;
+    
+        const sql = `SELECT * FROM "cliente" WHERE "correoElectronico" = $1 AND "contraseña" = $2`;
         const values = [correoElectronico, password];
         const result = await client.query(sql, values);
         await client.end();
-
-        const validar = this.validarUsername(correoElectronico); 
-        console.log("validar es",validar)
-
-        if(!validar || result.rowCount == 0){
+    
+        const validar = this.validarUsername(correoElectronico);
+    
+        if (!validar || result.rowCount === 0) {
             return ["El email o la contraseña es inválido.", 400];
         } else {
-            return [result.rows[0], 200];
+            const user = result.rows[0];
+            console.log('Usuario encontrado:', user); // Agrega un log aquí para verificar
+    
+            const payload = {
+                idCliente: user.idCliente,  
+                username: user.correoElectronico,
+                role: 'user',
+            };
+    
+            const secretKey = process.env.ACCESS_TOKEN_SECRET || 'ClaveSuperSecreta2006$';
+            const token = jwt.sign(payload, secretKey);
+    
+            console.log('Token generado:', token); 
+    
+            return [{ token, idCliente: user.idCliente }, 200];
         }
-    }
+    };
+    
+    
+    
 
     registerAsync = async (body) => {
         const client = new Client(config);
