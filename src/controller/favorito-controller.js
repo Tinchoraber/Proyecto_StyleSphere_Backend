@@ -17,8 +17,7 @@ const verifyToken = (req, res, next) => {
             if (err) {
                 return res.status(401).json({ message: 'Token inválido' });
             }
-            console.log(req.user); 
-            req.user = user.idCliente; 
+            req.user = user; // Asignar el usuario completo al req.user
             next();
         });
     } else {
@@ -28,8 +27,7 @@ const verifyToken = (req, res, next) => {
 
 router.get('/', verifyToken, async (req, res) => {
     try {
-        const idCliente = req.user.idCliente;
-        console.log(idCliente)
+        const idCliente = req.user.idCliente;  // Ahora accedes correctamente al idCliente
         const returnArray = await svc.getFavorito(idCliente);
         res.status(returnArray[1]).json(returnArray[0]);
     } catch (error) {

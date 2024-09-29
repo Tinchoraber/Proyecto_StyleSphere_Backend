@@ -27,7 +27,6 @@ export default class ClienteRepository{
             return ["El email o la contraseña es inválido.", 400];
         } else {
             const user = result.rows[0];
-            console.log('Usuario encontrado:', user); // Agrega un log aquí para verificar
     
             const payload = {
                 idCliente: user.idCliente,  
@@ -38,9 +37,13 @@ export default class ClienteRepository{
             const secretKey = process.env.ACCESS_TOKEN_SECRET || 'ClaveSuperSecreta2006$';
             const token = jwt.sign(payload, secretKey);
     
-            console.log('Token generado:', token); 
-    
-            return [{ token, idCliente: user.idCliente }, 200];
+            // Ahora incluimos nombre y apellido en la respuesta
+            return [{ 
+                token, 
+                idCliente: user.idCliente,
+                nombre: user.nombre,
+                apellido: user.apellido
+            }, 200];
         }
     };
     
