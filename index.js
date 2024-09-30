@@ -8,6 +8,8 @@ import ClienteRouter from './src/controller/cliente-controller.js';
 import CarritoRouter from './src/controller/carrito-controller.js';
 import FavoritoRouter from './src/controller/favorito-controller.js';
 import PerfilRouter from './src/controller/perfil-controller.js';
+import ReseniaRouter from './src/controller/resenia-controller.js';
+
 const app = express();
 const port = 3001; 
 // Agrego los Middlewares
@@ -24,6 +26,8 @@ app.use("/api/cliente", ClienteRouter);
 app.use("/api/carrito", CarritoRouter);
 app.use("/api/favorito", FavoritoRouter);
 app.use("/api/perfil", PerfilRouter);
+app.use("/api/resenia", ReseniaRouter);
+
 
 
 //
