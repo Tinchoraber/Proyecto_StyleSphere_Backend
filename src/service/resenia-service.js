@@ -1,5 +1,5 @@
 import ReseniaRepository from "../repository/resenia-repository.js";
-export default class ReseniaRepository{
+export default class ReseniaRepository2{
     getReseniasFromTienda = async (idTienda) => {
         const repo = new ReseniaRepository();
         let arrayRes = await repo.getReseniasFromTienda(idTienda);

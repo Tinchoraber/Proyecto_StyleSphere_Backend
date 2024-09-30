@@ -24,7 +24,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use(session({
-    //secret: 'dddddd',
+    secret: 'dddddd',
     resave: false,
     saveUninitialized: true,
 }));
@@ -34,17 +34,16 @@ app.use(passport.session());
 
 const pool = new Pool(dbconfig);
 
-// Configurar la estrategia de Google para Passport con logs adicionales
 passport.use(new GoogleStrategy({
-    //clientID: "328951780159-6tdfduuc7o4vk4fl5kdmjp0l5n31nba9.apps.googleusercontent.com",
-    //clientSecret: "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",
+    clientID: "328951780159-6tdfduuc7o4vk4fl5kdmjp0l5n31nba9.apps.googleusercontent.com",
+    clientSecret: "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",
     callbackURL: "http://localhost:3001/auth/google/callback"
 },
 async (accessToken, refreshToken, profile, done) => {
     try {
-        console.log("Access Token:", accessToken); // Log para verificar el accessToken
-        console.log("Refresh Token:", refreshToken); // Log para verificar el refreshToken
-        console.log("Profile:", profile); // Log para ver toda la información del perfil
+        console.log("Access Token:", accessToken); 
+        console.log("Refresh Token:", refreshToken); 
+        console.log("Profile:", profile);
 
         const { id, displayName, emails, photos } = profile;
         let photoUrl = photos && photos.length ? photos[0].value : "https://definicion.de/wp-content/uploads/2019/07/perfil-de-usuario.png";
@@ -52,37 +51,33 @@ async (accessToken, refreshToken, profile, done) => {
         const mail = emails[0].value;
         const telefono = profile.phoneNumbers ? profile.phoneNumbers[0].value : null;
 
-        // Verificar si el usuario ya existe en la base de datos
         const res = await pool.query('SELECT * FROM cliente WHERE "idclientgoogle" = $1', [id]);
         let user = res.rows[0];
 
-        // Si el usuario no existe, lo creamos en la base de datos
         if (!user) {
-            console.log("Usuario no encontrado, creando nuevo usuario..."); // Log si el usuario no existe
-            const tempPassword = "password_temporal"; // Contraseña temporal o un valor por defecto
+            console.log("Usuario no encontrado, creando nuevo usuario..."); 
+            const tempPassword = "password_temporal";
             const result = await pool.query(
                 'INSERT INTO cliente ("idclientgoogle", "nombre", "apellido", "correoElectronico", "celular", "fotoPerfil", "contraseña") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-                [id, nombre, apellido.join(" "), mail, telefono, photoUrl, tempPassword] // Ahora incluimos el password
+                [id, nombre, apellido.join(" "), mail, telefono, photoUrl, tempPassword] 
             );
             user = result.rows[0];
-            console.log("Nuevo usuario creado:", user); // Log para mostrar el nuevo usuario creado
+            console.log("Nuevo usuario creado:", user); 
         } else {
-            console.log("Usuario existente:", user); // Log si el usuario ya existe
+            console.log("Usuario existente:", user); 
         }
 
         return done(null, user);
     } catch (err) {
-        console.error("Error en la autenticación con Google:", err); // Log para capturar cualquier error
+        console.error("Error en la autenticación con Google:", err); 
         return done(err, null);
     }
 }));
 
-// Serializar el usuario en la sesión
 passport.serializeUser((user, done) => {
-    done(null, user.idclientgoogle); // Usamos el idclientgoogle para identificar al usuario
+    done(null, user.idclientgoogle); 
 });
 
-// Deserializar el usuario desde la sesión
 passport.deserializeUser(async (id, done) => {
     try {
         const res = await pool.query('SELECT * FROM cliente WHERE "idclientgoogle" = $1', [id]);
@@ -96,20 +91,16 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-// Ruta para autenticar con Google
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Callback después de la autenticación
 app.get('/auth/google/callback', 
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
-        const user = req.user; // Usuario autenticado
-        // Redirige al front-end con la información del usuario
+        const user = req.user; 
         res.redirect(`http://localhost:3000/views/Inicio?user=${encodeURIComponent(JSON.stringify(user))}`);
     }
 );
 
-// Rutas API
 app.use("/api/tipoProducto", tipoProductoRouter);
 app.use("/api/locales", LocalesRouter);
 app.use("/api/buscador", BuscadorRouter);

@@ -1,8 +1,8 @@
 const config = {
     host : "localhost", 
-    database : "postgres",
+    database : "StyleSphere_BD",
     user : "postgres", 
-    password : "root",
+    password : "marcos",
     port : 5432
 }
 
