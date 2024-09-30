@@ -27,7 +27,7 @@ const verifyToken = (req, res, next) => {
 
 router.get('/', verifyToken, async (req, res) => {
     try {
-        const idCliente = req.user.idCliente;  // Ahora accedes correctamente al idCliente
+        const idCliente = req.user.idCliente;  
         const returnArray = await svc.getFavorito(idCliente);
         res.status(returnArray[1]).json(returnArray[0]);
     } catch (error) {
@@ -36,9 +36,9 @@ router.get('/', verifyToken, async (req, res) => {
     }
 });
 
-router.post('', async (req, res) => {
+router.post('', verifyToken, async (req, res) => {
+    const idCliente = req.user.idCliente; 
     const idProducto = req.body.idProducto;
-    const idCliente = req.body.idCliente;
     const returnArray = await svc.insertFavoritoAsync(idProducto, idCliente);
     res.status(returnArray[1]).json(returnArray[0]);
 

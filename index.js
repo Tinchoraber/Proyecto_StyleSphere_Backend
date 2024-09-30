@@ -14,6 +14,7 @@ import ClienteRouter from './src/controller/cliente-controller.js';
 import CarritoRouter from './src/controller/carrito-controller.js';
 import FavoritoRouter from './src/controller/favorito-controller.js';
 import PerfilRouter from './src/controller/perfil-controller.js';
+import ReseniaRouter from './src/controller/resenia-controller.js';
 import dbconfig from './src/config/db-config.js';
 
 const app = express();
@@ -117,6 +118,9 @@ app.use("/api/cliente", ClienteRouter);
 app.use("/api/carrito", CarritoRouter);
 app.use("/api/favorito", FavoritoRouter);
 app.use("/api/perfil", PerfilRouter);
+app.use("/api/resenia", ReseniaRouter);
+
+
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
