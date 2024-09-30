@@ -24,7 +24,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use(session({
-    secret: 'dddddd',
+    //secret: 'dddddd',
     resave: false,
     saveUninitialized: true,
 }));
@@ -36,8 +36,8 @@ const pool = new Pool(dbconfig);
 
 // Configurar la estrategia de Google para Passport con logs adicionales
 passport.use(new GoogleStrategy({
-    clientID: "328951780159-6tdfduuc7o4vk4fl5kdmjp0l5n31nba9.apps.googleusercontent.com",
-    clientSecret: "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",
+    //clientID: "328951780159-6tdfduuc7o4vk4fl5kdmjp0l5n31nba9.apps.googleusercontent.com",
+    //clientSecret: "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",
     callbackURL: "http://localhost:3001/auth/google/callback"
 },
 async (accessToken, refreshToken, profile, done) => {
