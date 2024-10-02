@@ -54,30 +54,30 @@ async (accessToken, refreshToken, profile, done) => {
         const telefono = profile.phoneNumbers ? profile.phoneNumbers[0].value : null;
 
         const res = await pool.query('SELECT * FROM cliente WHERE "idclientgoogle" = $1', [id]);
-        let user = res.rows[0];
+        let userGoogle = res.rows[0];
 
-        if (!user) {
+        if (!userGoogle) {
             console.log("Usuario no encontrado, creando nuevo usuario..."); 
             const tempPassword = "password_temporal";
             const result = await pool.query(
-                'INSERT INTO cliente ("nombre", "apellido", "correoElectronico", "celular", "fotoPerfil", "contraseña","idclientgoogle") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-                [id, nombre, apellido.join(" "), mail, telefono, photoUrl, tempPassword] 
+                'INSERT INTO cliente ("nombre", "apellido", "correoElectronico", "celular", "fotoPerfil", "contraseña", "idclientgoogle") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+                [nombre, apellido.join(" "), mail, telefono, photoUrl, tempPassword, id] 
             );
-            user = result.rows[0];
-            console.log("Nuevo usuario creado:", user); 
+            usuario = result.rows[0];
+            console.log("Nuevo usuario creado:", usuario); 
         } else {
-            console.log("Usuario existente:", user); 
+            console.log("Usuario existente:", userGoogle); 
         }
-
-        return done(null, user);
+        const usuario = await pool.query('SELECT * FROM cliente WHERE "idclientgoogle" = $1', [id]);
+        return done(null, usuario);
     } catch (err) {
         console.error("Error en la autenticación con Google:", err); 
         return done(err, null);
     }
 }));
 
-passport.serializeUser((user, done) => {
-    done(null, user.idclientgoogle); 
+passport.serializeUser((usuario, done) => {
+    done(null, usuario.idclientgoogle); 
 });
 
 passport.deserializeUser(async (id, done) => {
@@ -86,8 +86,8 @@ passport.deserializeUser(async (id, done) => {
         if (res.rows.length === 0) {
             return done(new Error('Usuario no encontrado'), null);
         }
-        const user = res.rows[0];
-        done(null, user);
+        const usuario = res.rows[0];
+        done(null, usuario);
     } catch (err) {
         done(err, null);
     }
@@ -98,10 +98,11 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'em
 app.get('/auth/google/callback', 
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
-        const user = req.user;
-        const token = jwt.sign({ idCliente: user.idclientgoogle }, 'ClaveSuperSecreta2006$');  // Generar token para Google
+        const userGoogle = req.usuario;
+        console.log(userGoogle)
+        const token = jwt.sign({ idCliente: userGoogle.idCliente }, 'ClaveSuperSecreta2006$');  // Generar token para Google
 
-        res.redirect(`http://localhost:3000/views/Inicio?user=${encodeURIComponent(JSON.stringify(user))}&token=${token}`); // Incluir el token
+        res.redirect(`http://localhost:3000/views/Inicio?userGoogle=${encodeURIComponent(JSON.stringify(userGoogle))}&token=${token}`); // Incluir el token
     }
 );
 
