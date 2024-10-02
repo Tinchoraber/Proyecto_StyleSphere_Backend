@@ -17,7 +17,7 @@ const verifyToken = (req, res, next) => {
             if (err) {
                 return res.status(401).json({ message: 'Token inválido' });
             }
-            req.user = user; // Asignar el usuario completo al req.user
+            req.user = user; 
             next();
         });
     } else {
@@ -38,6 +38,7 @@ router.get('/', verifyToken, async (req, res) => {
 
 router.post('', verifyToken, async (req, res) => {
     const idCliente = req.user.idCliente; 
+    console.log("ID Cliente:", idCliente);  
     const idProducto = req.body.idProducto;
     const returnArray = await svc.insertFavoritoAsync(idProducto, idCliente);
     res.status(returnArray[1]).json(returnArray[0]);

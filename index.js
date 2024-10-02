@@ -3,6 +3,8 @@ import cors from "cors";
 import session from 'express-session'; // Importando sesión
 import passport from 'passport';
 import pkg from 'pg';
+import jwt from 'jsonwebtoken';
+
 const { Pool } = pkg;
 
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
@@ -58,7 +60,7 @@ async (accessToken, refreshToken, profile, done) => {
             console.log("Usuario no encontrado, creando nuevo usuario..."); 
             const tempPassword = "password_temporal";
             const result = await pool.query(
-                'INSERT INTO cliente ("idclientgoogle", "nombre", "apellido", "correoElectronico", "celular", "fotoPerfil", "contraseña") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+                'INSERT INTO cliente ("nombre", "apellido", "correoElectronico", "celular", "fotoPerfil", "contraseña","idclientgoogle") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
                 [id, nombre, apellido.join(" "), mail, telefono, photoUrl, tempPassword] 
             );
             user = result.rows[0];
@@ -96,8 +98,10 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'em
 app.get('/auth/google/callback', 
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
-        const user = req.user; 
-        res.redirect(`http://localhost:3000/views/Inicio?user=${encodeURIComponent(JSON.stringify(user))}`);
+        const user = req.user;
+        const token = jwt.sign({ idCliente: user.idclientgoogle }, 'ClaveSuperSecreta2006$');  // Generar token para Google
+
+        res.redirect(`http://localhost:3000/views/Inicio?user=${encodeURIComponent(JSON.stringify(user))}&token=${token}`); // Incluir el token
     }
 );
 
