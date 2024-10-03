@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import session from 'express-session'; // Importando sesión
+import session from 'express-session';
 import passport from 'passport';
 import pkg from 'pg';
 import jwt from 'jsonwebtoken';
@@ -43,8 +43,8 @@ passport.use(new GoogleStrategy({
 },
 async (accessToken, refreshToken, profile, done) => {
     try {
-        console.log("Access Token:", accessToken); 
-        console.log("Refresh Token:", refreshToken); 
+        console.log("Access Token:", accessToken);
+        console.log("Refresh Token:", refreshToken);
         console.log("Profile:", profile);
 
         const { id, displayName, emails, photos } = profile;
@@ -57,36 +57,36 @@ async (accessToken, refreshToken, profile, done) => {
         let userGoogle = res.rows[0];
 
         if (!userGoogle) {
-            console.log("Usuario no encontrado, creando nuevo usuario..."); 
+            console.log("Usuario no encontrado, creando nuevo usuario...");
             const tempPassword = "password_temporal";
             const result = await pool.query(
                 'INSERT INTO cliente ("nombre", "apellido", "correoElectronico", "celular", "fotoPerfil", "contraseña", "idclientgoogle") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-                [nombre, apellido.join(" "), mail, telefono, photoUrl, tempPassword, id] 
+                [nombre, apellido.join(" "), mail, telefono, photoUrl, tempPassword, id]
             );
-            usuario = result.rows[0];
-            console.log("Nuevo usuario creado:", usuario); 
+            userGoogle = result.rows[0];  // Asignamos el nuevo usuario creado
+            console.log("Nuevo usuario creado:", userGoogle);
         } else {
-            console.log("Usuario existente:", userGoogle); 
+            console.log("Usuario existente:", userGoogle);
         }
-        const usuario = await pool.query('SELECT * FROM cliente WHERE "idclientgoogle" = $1', [id]);
-        return done(null, usuario);
+
+        return done(null, userGoogle);  // Asegúrate de devolver el objeto `userGoogle`
     } catch (err) {
-        console.error("Error en la autenticación con Google:", err); 
+        console.error("Error en la autenticación con Google:", err);
         return done(err, null);
     }
 }));
 
 passport.serializeUser((usuario, done) => {
-    done(null, usuario.idclientgoogle); 
+    done(null, usuario.idclientgoogle);  // Asegúrate de usar el ID correcto del usuario
 });
 
 passport.deserializeUser(async (id, done) => {
     try {
         const res = await pool.query('SELECT * FROM cliente WHERE "idclientgoogle" = $1', [id]);
-        if (res.rows.length === 0) {
+        const usuario = res.rows[0];  // Aquí obtenemos el usuario correcto
+        if (!usuario) {
             return done(new Error('Usuario no encontrado'), null);
         }
-        const usuario = res.rows[0];
         done(null, usuario);
     } catch (err) {
         done(err, null);
@@ -95,14 +95,17 @@ passport.deserializeUser(async (id, done) => {
 
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-app.get('/auth/google/callback', 
+app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
-        const userGoogle = req.usuario;
-        console.log(userGoogle)
-        const token = jwt.sign({ idCliente: userGoogle.idCliente }, 'ClaveSuperSecreta2006$');  // Generar token para Google
+        const userGoogle = req.user;  
+        const token = jwt.sign({ idCliente: userGoogle.idcliente }, 'ClaveSuperSecreta2006$'); 
+        const userGoogleString = encodeURIComponent(JSON.stringify(userGoogle));
 
-        res.redirect(`http://localhost:3000/views/Inicio?userGoogle=${encodeURIComponent(JSON.stringify(userGoogle))}&token=${token}`); // Incluir el token
+        console.log(`Redirection URL: http://localhost:3000/views/Inicio?user=${userGoogleString}&token=${token}`);
+
+
+        res.redirect(`http://localhost:3000/views/Inicio?user=${userGoogleString}&token=${token}`);
     }
 );
 
@@ -115,8 +118,6 @@ app.use("/api/carrito", CarritoRouter);
 app.use("/api/favorito", FavoritoRouter);
 app.use("/api/perfil", PerfilRouter);
 app.use("/api/resenia", ReseniaRouter);
-
-
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
