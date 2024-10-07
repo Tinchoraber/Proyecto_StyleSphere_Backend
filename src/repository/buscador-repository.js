@@ -15,12 +15,10 @@ export default class BuscadorRepository {
 
       let values = [`%${buscado}%`];
 
-      // Ejecutar las tres consultas
       const resultTienda = await client.query(sqlTienda, values);
       const resultProducto = await client.query(sqlProducto, values);
       const resultTipoProducto = await client.query(sqlTipoProducto, values);
 
-      // Combinar los resultados en un solo array
       arrayDevuelto = [...resultTienda.rows, ...resultProducto.rows, ...resultTipoProducto.rows];
 
       console.log(arrayDevuelto);

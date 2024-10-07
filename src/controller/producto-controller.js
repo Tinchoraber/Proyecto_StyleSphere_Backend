@@ -46,7 +46,6 @@ router.get('/productos_filtro', async (req, res) => {
 
 
 router.get('/tienda/:idTienda', async (req, res) => {
-    console.log('entro aca')
     const idTienda = parseInt(req.params.idTienda, 10);
 
     try {
@@ -75,14 +74,11 @@ router.get('/filtro_categorias/:idTipoProducto', async (req, res) => {
 
 router.get('/productos_filtro2', async (req, res) => {
     const { seleccionados, idTienda } = req.query;
-    console.log("aaaaaaaaaaaaaaaa", seleccionados, idTienda)
     if (!seleccionados) {
         return res.status(400).json({ error: 'No se han proporcionado productos para filtrar' });
     }
     const productosFiltrados = seleccionados.split(',');
     try {
-        console.log('pro',productosFiltrados)
-        console.log('iff', idTienda)
         const resultados = await svc.getProductosFiltradosTienda(productosFiltrados, idTienda);
         if (resultados.length === 0) {
             res.status(404).json({ message: 'No hay productos' });
@@ -92,6 +88,26 @@ router.get('/productos_filtro2', async (req, res) => {
     } catch (error) {
         console.error('Error al obtener los productos:', error);
         res.status(500).json({ error: 'Error al obtener los productos' });
+    }
+});
+
+router.get('/:idProducto', async (req, res) => {
+    const idProducto = parseInt(req.params.idProducto, 10);
+
+    if (isNaN(idProducto)) {
+        return res.status(400).json({ error: 'idProducto debe ser un número entero' });
+    }
+
+    try {
+        const arrayDevuelto = await svc.getProductoById(idProducto);
+        if (arrayDevuelto.length === 0) {
+            res.status(404).send('No existe el producto');
+        } else {
+            res.status(200).json(arrayDevuelto);
+        }
+    } catch (error) {
+        console.error('Error al obtener el producto:', error);
+        res.status(500).send('Error al obtener los productos');
     }
 });
 export default router;

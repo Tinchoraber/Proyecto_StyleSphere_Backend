@@ -8,9 +8,9 @@ export default class LocalesRepository {
         const client = new Client(config);
         try {
             await client.connect();
-            let sql = 'SELECT * FROM "tipoproducto" ORDER BY "cantidadVentas" DESC'; // Asegúrate de usar el nombre correcto de la tabla
+            let sql = 'SELECT * FROM "tipoproducto" ORDER BY "cantidadVentas" DESC'; 
             const result = await client.query(sql);
-            arrayDevuelto = result.rows; // Extraer las filas del resultado
+            arrayDevuelto = result.rows; 
             await client.end();
         } catch (error) {
             console.log(error);

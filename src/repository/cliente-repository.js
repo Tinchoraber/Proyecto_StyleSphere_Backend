@@ -37,7 +37,6 @@ export default class ClienteRepository{
             const secretKey = process.env.ACCESS_TOKEN_SECRET || 'ClaveSuperSecreta2006$';
             const token = jwt.sign(payload, secretKey);
     
-            // Ahora incluimos nombre y apellido en la respuesta
             return [{ 
                 token, 
                 idCliente: user.idCliente,

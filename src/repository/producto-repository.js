@@ -119,6 +119,26 @@ export default class ProductoRepository {
     
         return arrayDevuelto;
     }
+
+    getProductoById = async (idProducto) => { 
+        const client = new Client(config);
+        let arrayDevuelto = [];
+
+        try {
+            await client.connect();
+            const values = [idProducto];
+            const sql = 'SELECT * FROM "producto" WHERE "idProducto" = $1';
+            const result = await client.query(sql, values);
+            arrayDevuelto = result.rows;
+        } catch (error) {
+            console.error('Error al obtener el producto:', error);
+            throw error;
+        } finally {
+            await client.end();
+        }
+
+        return arrayDevuelto;
+    }
 }
     
 

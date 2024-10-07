@@ -27,7 +27,6 @@ const verifyToken = (req, res, next) => {
 
 router.get('/', verifyToken, async (req, res) => {
     try {
-        console.log("aaaaaaaaaaaaaaaaaa", req.user);
         const idCliente = req.user.idCliente;  
         const returnArray = await svc.getFavorito(idCliente);
         res.status(returnArray[1]).json(returnArray[0]);
@@ -38,10 +37,8 @@ router.get('/', verifyToken, async (req, res) => {
 });
 
 router.post('', verifyToken, async (req, res) => {
-    //console.log('gfheywrrgtkt', req.user)
     const idCliente = req.user.idCliente; 
     const idProducto = req.body.idProducto;
-    console.log("aaaaaaaaaaaaaaaaaa", idCliente, "bbbbbbbbbbbbb", idProducto);
     const returnArray = await svc.insertFavoritoAsync(idProducto, idCliente);
     res.status(returnArray[1]).json(returnArray[0]);
 

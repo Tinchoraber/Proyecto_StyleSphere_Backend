@@ -63,49 +63,53 @@ async (accessToken, refreshToken, profile, done) => {
                 'INSERT INTO cliente ("nombre", "apellido", "correoElectronico", "celular", "fotoPerfil", "contraseña", "idclientgoogle") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
                 [nombre, apellido.join(" "), mail, telefono, photoUrl, tempPassword, id]
             );
-            userGoogle = result.rows[0];  // Asignamos el nuevo usuario creado
-            console.log("Nuevo usuario creado:", userGoogle);
+            userGoogle = result.rows[0];
+            console.log('usuario es:', userGoogle)  
         } else {
             console.log("Usuario existente:", userGoogle);
         }
 
-        return done(null, userGoogle);  // Asegúrate de devolver el objeto `userGoogle`
+        return done(null, userGoogle);  
     } catch (err) {
         console.error("Error en la autenticación con Google:", err);
         return done(err, null);
     }
 }));
-
 passport.serializeUser((usuario, done) => {
-    done(null, usuario.idclientgoogle);  // Asegúrate de usar el ID correcto del usuario
+    done(null, usuario);  
 });
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (usuario, done) => {
     try {
-        const res = await pool.query('SELECT * FROM cliente WHERE "idclientgoogle" = $1', [id]);
-        const usuario = res.rows[0];  // Aquí obtenemos el usuario correcto
-        if (!usuario) {
+        const res = await pool.query('SELECT * FROM cliente WHERE "idCliente" = $1', [usuario.idCliente]);
+        const usuarioGuardado = res.rows[0];  
+        if (!usuarioGuardado) {
             return done(new Error('Usuario no encontrado'), null);
         }
-        done(null, usuario);
+        done(null, usuarioGuardado);
     } catch (err) {
         done(err, null);
     }
 });
+
 
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
-        const userGoogle = req.user;  
-        const token = jwt.sign({ idCliente: userGoogle.idcliente }, 'ClaveSuperSecreta2006$'); 
-        const userGoogleString = encodeURIComponent(JSON.stringify(userGoogle));
+        const userGoogle = req.user; 
+        if (userGoogle && userGoogle.idCliente) {
+            const token = jwt.sign({ idCliente: userGoogle.idCliente }, 'ClaveSuperSecreta2006$');  // Usamos `idCliente` en el token
+            const userGoogleString = encodeURIComponent(JSON.stringify(userGoogle));
 
-        console.log(`Redirection URL: http://localhost:3000/views/Inicio?user=${userGoogleString}&token=${token}`);
+            console.log(`Redirection URL: http://localhost:3000/views/Inicio?user=${userGoogleString}&token=${token}`);
 
-
-        res.redirect(`http://localhost:3000/views/Inicio?user=${userGoogleString}&token=${token}`);
+            // Redirigimos al frontend con el token JWT que incluye `idCliente`
+            res.redirect(`http://localhost:3000/views/Inicio?user=${userGoogleString}&token=${token}`);
+        } else {
+            res.status(500).send('Error: No se pudo procesar la autenticación.');
+        }
     }
 );
 
