@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import ReseniaService from '../service/resenia-service.js';
+import jwt from 'jsonwebtoken';
 const router = Router();
 const svc = new ReseniaService();
 
@@ -24,33 +25,34 @@ const verifyToken = (req, res, next) => {
 };
 
 
-router.get('/:idTienda', verifyToken, async (req, res) => {
+router.get('/:idTienda', async (req, res) => {
     const idTienda = req.params.idTienda
     const returnArray = await svc.getReseniasFromTienda(idTienda);
     res.status(returnArray[1]).json(returnArray[0]);
 
 });
 
-router.post('/agregar/', verifyToken, async (req, res) => {
+router.post('/agregar', verifyToken, async (req, res) => {
     const idCliente = req.user.idCliente; 
-    const idTienda = req.params.idTienda
+    const idTienda = req.body.idTienda
     const resenia = req.body
     const returnArray = await svc.agregarResenia(idCliente, idTienda, resenia);
     res.status(returnArray[1]).json(returnArray[0]);
 
 });
 
-router.put('/actualizar/', verifyToken, async (req, res) => {
+router.put('/actualizar', verifyToken, async (req, res) => {
     const idCliente = req.user.idCliente; 
-    const idTienda = req.params.idTienda
-    const reseniaNueva = req.body
+    const idTienda = req.body.idTienda;
+    const reseniaNueva = req.body;
     const returnArray = await svc.actualizarResenia(idCliente, idTienda, reseniaNueva);
     res.status(returnArray[1]).json(returnArray[0]);
 
 });
 
-router.delete('/borrar/', async (req, res) => {
+router.delete('/borrar/:idResenia', async (req, res) => {
     const idResenia = req.params.idResenia; 
+    console.log('el id del controller es',idResenia)
     const returnArray = await svc.borrarResenia(idResenia);
     res.status(returnArray[1]).json(returnArray[0]);
 

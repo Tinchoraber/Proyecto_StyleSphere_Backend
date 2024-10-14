@@ -7,7 +7,7 @@ export default class ReseniaRepository {
         const client = new Client(config);
         await client.connect();
         const values = [idTienda]
-        const sql = `SELECT * FROM "reseña" WHERE "idTienda" = $1`;
+        const sql = `SELECT r.*, c.nombre, c.apellido FROM "reseña" r INNER JOIN "cliente" c ON r."idCliente" = c."idCliente" WHERE r."idTienda" = $1`;
         const result = await client.query(sql, values);
         await client.end();
         if(result.rowCount > 0){
@@ -30,7 +30,7 @@ export default class ReseniaRepository {
         const result = await client.query(sql, values);
         await client.end();
         if(result.rowCount > 0){
-            return [result, 200]
+            return [result.rows[0], 200]
         }
         else{
             return ['Error insertando la reseña ', 400]
@@ -49,7 +49,7 @@ export default class ReseniaRepository {
         const result = await client.query(sql, values);
         await client.end();
         if(result.rowCount > 0){
-            return [result, 200]
+            return [result.rows[0], 200]
         }
         else{
             return ['Error actualizando la reseña ', 400]
@@ -60,12 +60,14 @@ export default class ReseniaRepository {
     borrarResenia = async (idResenia) => { 
         const client = new Client(config);
         await client.connect();
-        const sql = `DELETE * FROM "reseña" WHERE idReseña = $1 RETURNING *`;
+        const sql = `DELETE FROM "reseña" WHERE "idReseña" = $1 RETURNING *`;
         const values = [idResenia]
+        console.log('id', idResenia)
         const result = await client.query(sql, values);
+        console.log(result)
         await client.end();
         if(result.rowCount > 0){
-            return [result, 200]
+            return [result.rows[0], 200]
         }
         else{
             return ['Error actualizando la reseña ', 400]

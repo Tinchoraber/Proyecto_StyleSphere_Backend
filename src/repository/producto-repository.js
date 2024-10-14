@@ -60,7 +60,6 @@ export default class ProductoRepository {
         }
         else{
             await client.end();
-            console.log("entroa a result",result.rows)
             return result.rows;
         }
         
