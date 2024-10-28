@@ -31,6 +31,24 @@ export default class BuscadorRepository {
 
     return arrayDevuelto;
   }
+
+  searchAsyncByLocal = async (buscado) => {
+    let arrayDevuelto = [];
+    const client = new Client(config);
+    try {
+      await client.connect();
+      let sqlTienda = `SELECT t.* FROM "tienda" t WHERE lower(t.nombre) LIKE lower($1)`;
+      let values = [`%${buscado}%`];
+      const resultTienda = await client.query(sqlTienda, values);
+      arrayDevuelto = [...resultTienda.rows];
+    } catch (error) {
+      console.error('Error al buscar en la base de datos:', error);
+    } finally {
+      await client.end();
+    }
+
+    return arrayDevuelto;
+  }
 }
 
 

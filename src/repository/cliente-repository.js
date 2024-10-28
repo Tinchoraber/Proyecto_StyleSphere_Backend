@@ -41,7 +41,8 @@ export default class ClienteRepository{
                 token, 
                 idCliente: user.idCliente,
                 nombre: user.nombre,
-                apellido: user.apellido
+                apellido: user.apellido,
+                correoElectronico: user.correoElectronico
             }, 200];
         }
     };

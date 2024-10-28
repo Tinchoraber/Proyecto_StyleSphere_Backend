@@ -10,7 +10,16 @@ router.get('/:buscado', async (req, res) => {
     if (arrayDevuelto == null || arrayDevuelto.length === 0) {
         res.status(404).send('No se encontraron resultados');
     } else {
-        res.status(200).json(arrayDevuelto); // Asegúrate de devolver solo arrayDevuelto.rows
+        res.status(200).json(arrayDevuelto); 
+    }
+});
+router.get('/local/:buscado', async (req, res) => {
+    const buscado = req.params.buscado;
+    const arrayDevuelto = await svc.searchAsyncByLocal(buscado);
+    if (arrayDevuelto == null || arrayDevuelto.length === 0) {
+        res.status(404).send('No se encontraron resultados');
+    } else {
+        res.status(200).json(arrayDevuelto);
     }
 });
 

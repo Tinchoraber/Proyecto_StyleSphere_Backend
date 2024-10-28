@@ -5,4 +5,9 @@ export default class BuscadorService{
         let arrayRes = await repo.searchAsync(buscado);
         return arrayRes;
     }
+    searchAsyncByLocal = async (buscado) => {
+        const repo = new BuscadorRepository();
+        let arrayRes = await repo.searchAsyncByLocal(buscado);
+        return arrayRes;
+    }
 }
