@@ -11,4 +11,10 @@ export default class ClienteService {
     let arrayRes = await repo.registerAsync(body);
     return arrayRes;
   };
+
+  updateContraseña = async (email, nuevaContraseña) => {
+    const repo = new ClienteRepository();
+    let arrayRes = await repo.updateContraseña(email, nuevaContraseña);
+    return arrayRes;
+  };
 }

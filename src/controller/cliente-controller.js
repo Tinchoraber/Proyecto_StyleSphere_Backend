@@ -19,5 +19,13 @@ router.post('/register', async (req, res) => {
     res.status(register[1]).json(register[0]);
 });
 
+router.put('/actualizarContraseña', async (req, res) => {
+    const email = req.body.email;
+    const nuevaContraseña = req.body.contraseña;
+    const result = await svc.updateContraseña(email, nuevaContraseña);
+
+    res.status(result[1]).json(result[0]);
+});
+
 
 export default router;
