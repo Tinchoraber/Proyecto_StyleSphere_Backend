@@ -96,18 +96,20 @@ export default class ClienteRepository {
   };
 
   validarExisteCorreo = async (email) => {
-    const validado = false;
+    let validado = false;  // Cambiar const a let
     const client = new Client(config);
     await client.connect();
     const sql = 'SELECT * FROM "cliente" WHERE "correoElectronico" = $1';
     const values = [email];
     const result = await client.query(sql, values);
     await client.end();
-
+  
     if (result.rowCount > 0) {
-      return validado = true;
+      validado = true;  // Aquí ya no hay problema al reasignar
     } else {
-      return validado = false;
+      validado = false; // Esta línea es opcional ya que validado ya es false por defecto
     }
+    return validado; // Retorna el valor final de validado
   };
+  
 }

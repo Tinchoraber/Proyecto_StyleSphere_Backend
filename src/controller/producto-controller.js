@@ -63,7 +63,7 @@ router.get('/tienda/:idTienda', async (req, res) => {
 
 router.get('/filtro_categorias/:idTipoProducto', async (req, res) => {
     const {talle, color, precioMin, precioMax } = req.query;
-    const idTipoProducto = parseInt(req.params.idTipoProducto, 10);
+    const idTipoProducto = req.params.idTipoProducto;
     const arrayDevuelto = await svc.getAllFilteredAsync(idTipoProducto, talle, color, precioMin, precioMax);
     if (arrayDevuelto == null || arrayDevuelto.length === 0) {
         res.status(404).send('No se encontraron productos');
@@ -72,7 +72,7 @@ router.get('/filtro_categorias/:idTipoProducto', async (req, res) => {
     }
 });
 
-router.get('/productos_filtro2', async (req, res) => {
+router.get('/productos_filtro2', async (    req, res) => {
     const { seleccionados, idTienda } = req.query;
     if (!seleccionados) {
         return res.status(400).json({ error: 'No se han proporcionado productos para filtrar' });
