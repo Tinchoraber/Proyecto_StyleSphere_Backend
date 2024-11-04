@@ -62,12 +62,11 @@ export default class ReseniaRepository {
         await client.connect();
         const sql = `DELETE FROM "reseña" WHERE "idReseña" = $1 RETURNING *`;
         const values = [idResenia]
-        console.log('id', idResenia)
         const result = await client.query(sql, values);
         console.log(result)
         await client.end();
         if(result.rowCount > 0){
-            return [result.rows[0], 200]
+            return [result.rows, 200]
         }
         else{
             return ['Error actualizando la reseña ', 400]

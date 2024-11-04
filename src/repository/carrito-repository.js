@@ -17,12 +17,12 @@ export default class CarritoRepository {
     }
   };
 
-  insertCarritoAsync = async (idProducto, idCliente, cantidad) => {
+  insertCarritoAsync = async (idProducto, idCliente, cantidad, color, talle) => {
     const client = new Client(config);
     await client.connect();
-    const sql = `INSERT INTO carrito ("idProducto", "idCliente", "cantidadAComprar")
-                                VALUES ($1, $2, $3)`;
-    const values = [idProducto, idCliente, cantidad];
+    const sql = `INSERT INTO carrito ("idProducto", "idCliente", "cantidadAComprar", "color", "talle")
+                                VALUES ($1, $2, $3, $4, $5)`;
+    const values = [idProducto, idCliente, cantidad, color, talle];
     const result = await client.query(sql, values);
     await client.end();
     if (result.rowCount > 0) {
@@ -38,6 +38,20 @@ export default class CarritoRepository {
 
     const sql = `UPDATE "carrito" SET "cantidadAComprar" = $1 WHERE "idProducto" = $2 AND "idCliente" = $3`;
     const values = [cantidad, idProducto, idCliente];
+    const result = await client.query(sql, values);
+    await client.end();
+    if (result.rowCount > 0) {
+      return [result.rows, 200]; 
+    } else {
+      return ["Error actualizando el carrito", 400]; 
+    }
+  };
+
+  borrarProductoCarritoAsync = async (idCarrito) => {
+    const client = new Client(config); 
+    await client.connect();
+    const sql = `DELETE FROM "carrito" WHERE "idCarrito" = $1 RETURNING *`;
+    const values = [idCarrito];
     const result = await client.query(sql, values);
     await client.end();
     if (result.rowCount > 0) {

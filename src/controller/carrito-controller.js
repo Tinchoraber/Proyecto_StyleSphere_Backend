@@ -28,11 +28,15 @@ router.get('/', verifyToken, async (req, res) => {
     res.status(returnArray[1]).json(returnArray[0]);
 
 });
-router.post('', verifyToken, async (req, res) => {
+router.post('/agregar', verifyToken, async (req, res) => {
     const idProducto = req.body.idProducto;
     const cantidad = req.body.cantidad;
+    const color = req.body.color;
+    console.log(color)
+    const talle = req.body.talle;
+    console.log(talle)
     const idCliente = req.user.idCliente;
-    const returnArray = await svc.insertCarritoAsync(idProducto, idCliente, cantidad);
+    const returnArray = await svc.insertCarritoAsync(idProducto, idCliente, cantidad, color, talle);
     res.status(returnArray[1]).json(returnArray[0]);
 
 });
@@ -45,5 +49,11 @@ router.put('/:idProducto', verifyToken, async (req, res) => {
     res.status(returnArray[1]).json(returnArray[0]);
 });
 
+
+router.delete('/:idCarrito', async (req, res) => {
+    const idCarrito = req.params.idCarrito;
+    const returnArray = await svc.borrarProductoCarritoAsync(idCarrito);
+    res.status(returnArray[1]).json(returnArray[0]);
+});
 
 export default router;
