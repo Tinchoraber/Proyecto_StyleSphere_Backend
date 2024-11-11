@@ -44,6 +44,7 @@ export default class ClienteRepository {
           idCliente: user.idCliente,
           nombre: user.nombre,
           apellido: user.apellido,
+          username: user.correoElectronico
         },
         200,
       ];
