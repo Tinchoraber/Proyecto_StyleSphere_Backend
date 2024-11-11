@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import FavoritoService from '../service/favorito-service.js';
 import jwt from 'jsonwebtoken';
+import TarjetaService from '../service/tarjeta-service.js';
 
 const router = Router();
-const svc = new FavoritoService();
+const svc = new TarjetaService();
 
 const verifyToken = (req, res, next) => {
     const bearerHeader = req.headers['authorization'];
@@ -17,7 +17,7 @@ const verifyToken = (req, res, next) => {
             if (err) {
                 return res.status(401).json({ message: 'Token inválido' });
             }
-            req.user = user; 
+            req.user = user;
             next();
         });
     } else {
@@ -25,30 +25,24 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-router.get('/', verifyToken, async (req, res) => {
-    try {
-        const idCliente = req.user.idCliente;  
-        const returnArray = await svc.getFavorito(idCliente);
-        res.status(returnArray[1]).json(returnArray[0]);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error en el servidor' });
-    }
-});
 
-router.post('', verifyToken, async (req, res) => {
+router.get('', verifyToken, async (req, res) => {
     const idCliente = req.user.idCliente; 
-    const idProducto = req.body.idProducto;
-    const returnArray = await svc.insertFavoritoAsync(idProducto, idCliente);
+    const returnArray = await svc.getAllTarjetasFromClienteAsync(idCliente);
     res.status(returnArray[1]).json(returnArray[0]);
 });
 
-router.delete('/:idFavorito', async (req, res) => {
-    const idFavorito = req.params.idFavorito
-    const returnArray = await svc.deleteFavorito(idFavorito);
+router.post('/agregar', verifyToken, async (req, res) => {
+    const idCliente = req.user.idCliente;
+    const tarjeta = req.body
+    const returnArray = await svc.agregarTarjeta(idCliente, tarjeta);
     res.status(returnArray[1]).json(returnArray[0]);
-
 });
 
+router.delete('/borrar/:idTarjeta', async (req, res) => {
+    const idTarjeta = req.params.idTarjeta;
+    const returnArray = await svc.borrarTarjeta(idTarjeta);
+    res.status(returnArray[1]).json(returnArray[0]);
+});
 
 export default router;
