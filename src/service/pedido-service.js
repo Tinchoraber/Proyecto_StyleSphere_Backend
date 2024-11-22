@@ -1,8 +1,8 @@
 import PedidoRepository from "../repository/pedido-repository.js";
-export default class PedidoRepository{
-    crearPedido = async (idCliente, tarjeta) => {
-        const repo = new TarjetaRepository();
-        let arrayRes = await repo.crearPedido(idCliente, tarjeta);
+export default class PedidoService{
+    crearPedido = async (productos, precioTotal) => {
+        const repo = new PedidoRepository();
+        let arrayRes = await repo.crearPedido(productos, precioTotal);
         return arrayRes;
     }
 

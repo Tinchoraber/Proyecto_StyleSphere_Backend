@@ -18,7 +18,7 @@ import FavoritoRouter from './src/controller/favorito-controller.js';
 import PerfilRouter from './src/controller/perfil-controller.js';
 import ReseniaRouter from './src/controller/resenia-controller.js';
 import TarjetaRouter from './src/controller/tarjeta-controller.js';
-import PedidoRouter from './src/controller/pedido-controller.js;'
+import PedidoRouter from './src/controller/pedido-controller.js';
 import dbconfig from './src/config/db-config.js';
 
 const app = express();
