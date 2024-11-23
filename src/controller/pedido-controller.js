@@ -41,7 +41,8 @@ router.post('/agregar', verifyToken, async (req, res) => {
         console.log('Datos recibidos:', req.body);
         const { productos, precioTotal } = req.body;
         
-        if (!Array.isArray(productos) || !precioTotal) {
+        // Validar que productos sea un array y no esté vacío
+        if (!productos || !Array.isArray(productos) || productos.length === 0 || !precioTotal) {
             return res.status(400).json({ 
                 error: 'Se requiere un array de productos y el precio total',
                 received: req.body
@@ -50,9 +51,9 @@ router.post('/agregar', verifyToken, async (req, res) => {
 
         // Validar que todos los productos tengan los campos necesarios
         for (const producto of productos) {
-            if (!producto.idCarrito || !producto.precio) {
+            if (!producto.idCarrito || producto.precio === undefined || producto.cantidadAComprar === undefined) {
                 return res.status(400).json({ 
-                    error: 'Cada producto debe tener idCarrito y precio',
+                    error: 'Cada producto debe tener idCarrito, precio y cantidadAComprar',
                     received: producto
                 });
             }
@@ -68,6 +69,24 @@ router.post('/agregar', verifyToken, async (req, res) => {
     }
 }); 
 
+router.get('/:idDetallePedido', verifyToken, async (req, res) => {
+    try {
+        const idDetallePedido = req.params.idDetallePedido;
+        
+        if (!idDetallePedido) {
+            return res.status(400).json({ 
+                error: 'Se requiere el ID del detalle del pedido'
+            });
+        }
 
+        const [resultado, statusCode] = await svc.obtenerPedidoById(idDetallePedido);
+        res.status(statusCode).json(resultado);
+    } catch (error) {
+        console.error('Error en controller:', error.message);
+        res.status(500).json({ 
+            error: error.message || 'Error al obtener el pedido'
+        });
+    }
+});
 
 export default router;

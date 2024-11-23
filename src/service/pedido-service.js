@@ -6,5 +6,8 @@ export default class PedidoService{
         return arrayRes;
     }
 
-    
+    obtenerPedidoById = async (idDetallePedido) => {
+        const repo = new PedidoRepository();
+        return await repo.obtenerPedidoById(idDetallePedido);
+    }
 }

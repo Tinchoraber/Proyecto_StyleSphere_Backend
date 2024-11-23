@@ -48,16 +48,33 @@ export default class CarritoRepository {
   };
 
   borrarProductoCarritoAsync = async (idCarrito) => {
-    const client = new Client(config); 
-    await client.connect();
-    const sql = `DELETE FROM "carrito" WHERE "idCarrito" = $1 RETURNING *`;
-    const values = [idCarrito];
-    const result = await client.query(sql, values);
-    await client.end();
-    if (result.rowCount > 0) {
-      return [result.rows, 200]; 
-    } else {
-      return ["Error actualizando el carrito", 400]; 
+    const client = new Client(config);
+    try {
+        await client.connect();
+        
+        // Primero verificamos si el producto está en algún pedido
+        const checkQuery = `
+            SELECT EXISTS (
+                SELECT 1 
+                FROM "detallePedido_Carrito" 
+                WHERE "idCarrito" = $1
+            )`;
+        const checkResult = await client.query(checkQuery, [idCarrito]);
+        
+        if (checkResult.rows[0].exists) {
+            throw new Error('No se puede eliminar el producto porque ya forma parte de un pedido');
+        }
+
+        // Si no está en ningún pedido, procedemos con el borrado
+        const deleteQuery = 'DELETE FROM carrito WHERE "idCarrito" = $1 RETURNING *';
+        const result = await client.query(deleteQuery, [idCarrito]);
+        
+        return [result.rows[0], result.rowCount > 0 ? 200 : 404];
+    } catch (error) {
+        console.error('Error en repository:', error);
+        throw error;
+    } finally {
+        await client.end();
     }
   };
 }
