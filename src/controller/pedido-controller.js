@@ -39,7 +39,7 @@ const verifyToken = (req, res, next) => {
 router.post('/agregar', verifyToken, async (req, res) => {
     try {
         console.log('Datos recibidos:', req.body);
-        const { productos, precioTotal } = req.body;
+        const { productos, precioTotal, idDetallePedido } = req.body;
         
         // Validar que productos sea un array y no esté vacío
         if (!productos || !Array.isArray(productos) || productos.length === 0 || !precioTotal) {
@@ -59,12 +59,19 @@ router.post('/agregar', verifyToken, async (req, res) => {
             }
         }
 
-        const [resultado, statusCode] = await svc.crearPedido(productos, precioTotal);
-        res.status(statusCode).json(resultado);
+        if (idDetallePedido) {
+            // Si existe el idDetallePedido, actualizamos el pedido
+            const [resultado, statusCode] = await svc.actualizarPedido(productos, precioTotal, idDetallePedido);
+            res.status(statusCode).json(resultado);
+        } else {
+            // Si no existe, creamos un nuevo pedido
+            const [resultado, statusCode] = await svc.crearPedido(productos, precioTotal);
+            res.status(statusCode).json(resultado);
+        }
     } catch (error) {
         console.error('Error en controller:', error.message);
         res.status(500).json({ 
-            error: error.message || 'Error al crear el pedido'
+            error: error.message || 'Error al crear o actualizar el pedido'
         });
     }
 }); 
